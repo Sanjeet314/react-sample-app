@@ -1,24 +1,30 @@
 const express = require("express");
 const path = require("path");
 const app = express();
+//const helmet = require("helmet");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const calculateDistance = require("./utility/distanceFormulae");
 
 const PORT = process.env.PORT || 3000;
 
-const products = [
-  { id: 1, name: "Product 1" },
-  { id: 2, name: "Product 2" },
-];
+/** for script we generally try to set Content Security Policy header */
+/** if third party itself is using Content Security Policy headr then third party will have to allow CORP Cross-Origin-Resource-Policy with your url Cross-Origin-Resource-Policy: same-site, http://localhost:3000 */
+
+// app.use(helmet());
+
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: ["'self'"],
+//       scriptSrc: ["'self'", "http://localhost:8080/"],//this will fine if csp is not in 3rd party server and this wont be enough if third party server itself has its CSP configured they will have to allow CORP for your server
+//     },
+//   })
+// );
 
 app.use(express.static(path.join(__dirname, "../build")));
 // Use body-parser middleware to parse JSON
 app.use(bodyParser.json());
-
-app.get("/products", (req, res) => {
-  res.json(products);
-});
 
 app.get("/dataservice/feeds", (req, res) => {
   const { longitude, latitude } = req.query;
